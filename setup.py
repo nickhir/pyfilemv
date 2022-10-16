@@ -17,6 +17,6 @@ setup(
     packages=find_packages(),
     install_requires=['colorama'],
     keywords=['python', 'filesystem', 'move', 'renaming', 'organization'],
-    classifiers=["Operating System :: Unix", "Operating System :: Microsoft", "Operating System :: MacOS"],
+    classifiers=["Operating System :: Unix", "Operating System :: MacOS"],
     scripts=['bin/pymv']
 )

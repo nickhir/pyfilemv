@@ -16,7 +16,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/nickhir/pyfilemv/",
     packages=find_packages(),
-    install_requires=['colorama'],
+    install_requires=['colorama', 'tqdm'],
     keywords=['python', 'filesystem', 'move', 'renaming', 'organization'],
     classifiers=["Operating System :: Unix", "Operating System :: MacOS"],
     scripts=['bin/pymv']

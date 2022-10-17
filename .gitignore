@@ -1,7 +1,7 @@
 # local folders
 analysis/
 .idea
-
+*wmf
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

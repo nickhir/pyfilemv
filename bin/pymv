@@ -7,7 +7,7 @@ import argparse
 import shutil
 from colorama import Fore, Style
 import textwrap as tr
-
+from tqdm import tqdm
 p = argparse.ArgumentParser()
 
 p.add_argument("source", type=str, help="Source file.")
@@ -15,13 +15,13 @@ p.add_argument("source", type=str, help="Source file.")
 p.add_argument("destination", type=str, help="Destination of the source file after the move.")
 
 p.add_argument("-r", "--root", type=str, required=False,
-               help="Specify the absolute path to a directory. All files that are part of that directory "
+               help="Specify the path to a directory. All files that are part of that directory "
                     "(and also subdirectories) are checked if they contain the file you want to move.")
 
 p.add_argument("-e", "--extension", type=str, required=False, nargs="+",
                help="Specify file extensions which should be included in the search. "
                     "Should look like this: -e ext1 ext2 ext3.\nBy default, the program searches in "
-                    "the following files: R, Rmd, RMD, txt, py, ipynb, md, pl, cpp, c, java")
+                    "the following files: R, Rmd, RMD, txt, py, ipynb, md, pl, cpp, java")
 
 p.add_argument("-a", "--absolute", action="store_true", required=False,
                help="If you set this flag, the program will search for the absolute filepath.")
@@ -84,7 +84,7 @@ def flatten(lst):
 def main():
     # By default, the script will look for matches in files with the following extension.
     FILE_EXTENSIONS_CHECK = ["R", "Rmd", "RMD", "txt", "py", "ipynb",
-                             "md", "pl", "cpp", "c", "java", "qmd"]
+                             "md", "pl", "cpp", "java", "qmd"]
 
     # You can add extensions, by adding extensions to the file ~/.pyfilemv
     # Add one extension per line.
@@ -127,14 +127,16 @@ def main():
     n_matches = 0
     print(logo)
     time.sleep(0.5)
-    for file in files_to_search:
+    print(f"In total, there are {len(files_to_search)} files with the indicated file extension.")
+    for file in tqdm(files_to_search):
         std_out_lines = []
         try:
             with open(file, "r") as f:
                 lines = f.readlines()
                 lines = [i.strip() for i in lines if i.strip() != ""]
         except UnicodeDecodeError:
-            print(f"Tried to open file {file} but failed. Skipping it.")
+            #print(f"Tried to open file {file} but failed. Skipping it.")
+            pass
         for index, l in enumerate(lines):
             # check if we find a match.
             if origin in l.strip():
@@ -160,7 +162,8 @@ def main():
                 # create the output sting
                 std_out_lines.append(
                     "\n".join(
-                        ["#" * (longest_string + 4),
+                        ["\n",
+                         "#" * (longest_string + 4),
                          add_padding(f"Found a match in file {file}:", longest_string),
                          add_padding("OLD: ", longest_string),
                          old_lines,
@@ -192,9 +195,11 @@ def main():
                 continue
             else:
                 sys.exit("You have to enter 'y', 'n', 'continue'. Quitting program.")
+        print(""*1000,end="\r")
 
     if n_matches == 0:
-        print(f"Didnt find a match in any file. Root directory was: {root_directory}")
+        print(
+            f"Didnt find a match in any file. The source file was nonetheless moved. Root directory was: {root_directory}")
     else:
         print(f"All done :)\nIn total, {n_matches} substitutions were done.")
 
